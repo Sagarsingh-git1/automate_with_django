@@ -1,0 +1,41 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automate boring stuff with Django </title>
+    <!-- Bootstrap 5 -->
+    <!-- Latest compiled and minified CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+<!-- Latest compiled JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<style>
+.form-group{
+    padding:15px !important;
+}
+</style>
+<script src="{% static 'js/custom.js' %}"></script>
+
+</head>
+<body>
+    <nav class="navbar navbar-light bg-light">
+  <div class="container">
+    <a class="navbar-brand" href="{% url 'home' %}">Automate with Django</a>
+    <div>
+        <a href="" class="float-right text-decoration-none text-dark">Login</a>
+        &nbsp;<a href="" class="float-right btn btn-success">Register</a>
+    </div>
+  </div>
+</nav>
+  
+     {% block content %}
+
+  <!-- the content willgo here -->
+
+
+     {% endblock %}
+
+</body>
+</html>
