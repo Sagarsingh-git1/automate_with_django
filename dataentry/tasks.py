@@ -34,6 +34,9 @@ def celery_export_data(model_name):
     except Exception as e:
         raise e
     
+
+ 
+    
     
 
 
