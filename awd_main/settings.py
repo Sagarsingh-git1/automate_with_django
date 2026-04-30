@@ -26,7 +26,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG',cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
     'emails',
     'ckeditor',
-    'anymail'
+    'anymail',
+    'image_compression'
 ]
 
 MIDDLEWARE = [
@@ -112,7 +113,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
@@ -177,6 +178,9 @@ ANYMAIL = {
 
 CKEDITOR_CONFIGS = {
     'default': {
-        'height': 200,
+        'height': 150,
     },
 }
+
+CSRF_TRUSTED_ORIGINS=['https://trimming-retired-despise.ngrok-free.dev']
+BASE_URL='https://trimming-retired-despise.ngrok-free.dev'

@@ -12,7 +12,7 @@ def celery_import_data(file_path,model_name):
         mail_subject= 'Import Data'
         message='Your data has been successfully imported !'
         to_email=settings.DEFAULT_TO_EMAIL
-        send_email_notification(mail_subject,message,to_email)
+        send_email_notification(mail_subject,message,[to_email])
         return 'Imported sucessfully'
         
     except Exception as e:
@@ -28,7 +28,7 @@ def celery_export_data(model_name):
         to_email=settings.DEFAULT_TO_EMAIL
         attachment=generate_csv_file(model_name)
 
-        send_email_notification(mail_subject,message,to_email,attachment)
+        send_email_notification(mail_subject,message,[to_email],attachment)
         return "Exported Successfully"
     
     except Exception as e:
