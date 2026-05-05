@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 from decouple import config
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -32,6 +33,8 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'dal',    
+    'dal_select2',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,7 +48,8 @@ INSTALLED_APPS = [
     'emails',
     'ckeditor',
     'anymail',
-    'image_compression'
+    'image_compression',
+    'stockanalysis'
 ]
 
 MIDDLEWARE = [
@@ -81,12 +85,22 @@ WSGI_APPLICATION = 'awd_main.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if config('DEBUG',cast=bool):
+        
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=config('DATABASE_URL'),
+            conn_max_age=600,
+            ssl_require=True
+        )
+    }
 
 
 # Password validation
@@ -124,7 +138,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT=BASE_DIR /'static'
+STATIC_ROOT=BASE_DIR /'staticfiles'
 STATICFILES_DIRS=['awd_main/static']
 
 
@@ -143,7 +157,7 @@ MESSAGE_TAGS = {
 }
 
 
-CELERY_BROKER_URL='redis://localhost:6379'
+CELERY_BROKER_URL=config('CELERY_BROKER_URL')
 
 
 
@@ -178,9 +192,9 @@ ANYMAIL = {
 
 CKEDITOR_CONFIGS = {
     'default': {
-        'height': 150,
+        'height': 250,
     },
 }
 
-CSRF_TRUSTED_ORIGINS=['https://trimming-retired-despise.ngrok-free.dev']
-BASE_URL='https://trimming-retired-despise.ngrok-free.dev'
+CSRF_TRUSTED_ORIGINS=[config('BASE_URL')]
+BASE_URL= config('BASE_URL')    

@@ -21,13 +21,14 @@ def celery_import_data(file_path,model_name):
 
 @app.task  
 def celery_export_data(model_name):
-    try:    
-        call_command('exportdata',model_name)
+    try:
+        # generate the csv filepath and write data into it
+        file_path=generate_csv_file(model_name)
+       
         mail_subject='Export Data'
         message='Your data has been exported successfully! Please find the attachment.'
         to_email=settings.DEFAULT_TO_EMAIL
-        attachment=generate_csv_file(model_name)
-
+        attachment=file_path
         send_email_notification(mail_subject,message,[to_email],attachment)
         return "Exported Successfully"
     

@@ -19,16 +19,25 @@ class Command(BaseCommand):
         # Check the csv errors from the helper function
         model=check_csv_error(file_path,model_name)
 
-        
+        unique_fields = [field.name for field in model._meta.fields if field.name !='id' and field.unique]
+        if unique_fields:    
+            unique_field=unique_fields[0]
+        else:
+            unique_field=None
+            self.stdout.write(self.style.WARNING(f'There is no unique fields in {model.__name__} table. All data importing!'))
     
         with open(file_path,'r') as file:
             reader=csv.DictReader(file)
 
             for row in reader:
-                existing=model.objects.filter(roll_no=int(row['roll_no'])).exists()
+                if unique_field:
 
-                if existing:
-                    self.stdout.write(self.style.WARNING(f'Student with roll_no {row['roll_no']} already exists!'))   
+                    existing=model.objects.filter(**{unique_field:row[unique_field]}).exists()
+
+                    if existing:
+                        self.stdout.write(self.style.WARNING(f'{model.__name__} with {unique_field} {row[unique_field]} already exists!'))   
+                    else:
+                        model.objects.create(**row)
                 else:
                     model.objects.create(**row)
 

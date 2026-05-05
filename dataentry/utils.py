@@ -14,24 +14,22 @@ from bs4 import BeautifulSoup
 def get_all_custom_models():
     custom_models=[]
 
-    default_model={'LogEntry','Permission','Group','User','ContentType','Session','Upload'}
+    default_model={'LogEntry','Permission','Group','User','ContentType','Session','Upload','List','Subscriber','Email','EmailTracking','ImageCompress','Sent'}
 
     for model in apps.get_models():
         if model.__name__ not in default_model:
-            custom_models.append(model.__name__)
+            custom_models.append({'name':model.__name__ , 'label':f'{model._meta.app_label}.{model.__name__}'})
     return custom_models
 
 
 def check_csv_error(file_path,model_name):
     model=None
-    for app_config in apps.get_app_configs():
-        try:
-            model=apps.get_model(app_config.label,model_name)
-            break
-        except LookupError:
-            continue
-    if not model:
-        raise CommandError(f'The model name: {model_name}, Not found across any of your apps!')
+    try:
+            
+        model=apps.get_model(model_name)
+    except (LookupError,ValueError):
+            raise CommandError(f'The model:{model_name} does not exists!.Use"app_label.ModelName"')
+            
     
     model_fields=[field.name for field in model._meta.fields if field.name!='id']
 
@@ -42,7 +40,7 @@ def check_csv_error(file_path,model_name):
             csv_header=reader.fieldnames
 
             if csv_header != model_fields:
-                raise DataError(f'CSV file doesnot match with {model_name} tables!')
+                raise DataError(f'CSV file doesnot match with {model.__name__} tables!')
     except Exception as e:
         raise e
     
@@ -105,17 +103,34 @@ def send_email_notification(mail_subject,message,to_email,attachment=None,email_
 
 def generate_csv_file(model_name):
         
+        model=None
+        try:    
+            model=apps.get_model(model_name) 
+        except (LookupError,ValueError):
+            raise CommandError(f'The model:{model_name} does not exists!.Use"app_label.ModelName"')
+        
+        obj=model.objects.all()
+       
+        
         # get the current timestamp
         timestamp=datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
 
         # create a csv file name
-        file_name=f'exported_{model_name}_data_{timestamp}.csv'
+        file_name=f'exported_{model.__name__}_data_{timestamp}.csv'
 
         # file directory
         path='exported_data'
 
         # create the full file_path
         file_path=os.path.join(settings.MEDIA_ROOT,path,file_name)
+        with open(file_path,'w',newline='')as file:
+
+            writer=csv.writer(file)
+
+            writer.writerow([field.name for field in model._meta.fields])
+
+            for i in obj:    
+                writer.writerow([ getattr(i,field.name) for field in model._meta.fields])
 
         return file_path
     
