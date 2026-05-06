@@ -4,6 +4,7 @@ from .models import ImageCompress
 from PIL import Image
 import io
 from django.http import HttpResponse
+from django.core.files.base import ContentFile
 
 # Create your views here.
 def compress(request):
@@ -28,8 +29,7 @@ def compress(request):
             
 
             compressed_image.compressed_img.save(
-                f'compressed_img_{original_img.name}',buffer
-            )
+                f'compressed_img_{original_img.name}',ContentFile(buffer.getvalue()),save=False)
             compressed_image.save()
             
             response=HttpResponse(buffer.getvalue(),content_type='image/{output_format.lower()}')
