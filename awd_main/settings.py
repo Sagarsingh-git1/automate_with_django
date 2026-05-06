@@ -160,6 +160,7 @@ MESSAGE_TAGS = {
 
 
 CELERY_BROKER_URL=config('REDIS_URL')
+USE_CELERY = config('USE_CELERY' , cast=bool)
 
 
 

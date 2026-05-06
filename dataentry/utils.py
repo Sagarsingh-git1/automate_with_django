@@ -133,6 +133,17 @@ def generate_csv_file(model_name):
                 writer.writerow([ getattr(i,field.name) for field in model._meta.fields])
 
         return file_path
+
+    
+
+
+
+
+def run_task(task, *args, **kwargs):
+    if settings.USE_CELERY:
+        return task.delay(*args, **kwargs)
+    else:
+        return task(*args, **kwargs)
     
 
 

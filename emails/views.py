@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from .forms import EmailForm
-from dataentry.utils import send_email_notification
+from dataentry.utils import send_email_notification,run_task
 from django.contrib import messages
 from .models import Subscriber,Email,EmailTracking
 from .tasks import celery_send_emails
@@ -37,7 +37,7 @@ def send_emails(request):
             email_id=email.pk
             
             # handover email sending task to celery
-            celery_send_emails.delay(mail_subject,message,to_email,attachment,email_id)
+            run_task(celery_send_emails,mail_subject,message,to_email,attachment,email_id)
         
 
             messages.success(request,'Email sent successfully.')

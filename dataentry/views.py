@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .utils import get_all_custom_models
+from .utils import get_all_custom_models,run_task
 from uploads.models import Upload
 from django.conf import settings
 from django.contrib import messages
@@ -37,7 +37,7 @@ def import_data(request):
 
         # trigger celery  to import data
     
-        celery_import_data.delay(file_path,model_path)
+        run_task(celery_import_data,file_path,model_path)
         messages.success(request,'Importing data. You will be notified once it is done.')
         
         
@@ -71,7 +71,7 @@ def export_data(request):
     
     
         # trigger celery to export data
-        celery_export_data.delay(model_name)
+        run_task(celery_export_data,model_name)
 
         messages.success(request,'Your Data is being exported.You will be notified once it is done.')
         return redirect('export_data')
