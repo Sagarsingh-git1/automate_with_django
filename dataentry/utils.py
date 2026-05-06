@@ -119,10 +119,12 @@ def generate_csv_file(model_name):
         file_name=f'exported_{model.__name__}_data_{timestamp}.csv'
 
         # file directory
-        path='exported_data'
+        path=os.path.join(settings.MEDIA_ROOT,'exported_data')
 
+        directory=os.makedirs(path,exist_ok=True)
+        
         # create the full file_path
-        file_path=os.path.join(settings.MEDIA_ROOT,path,file_name)
+        file_path=os.path.join(directory,file_name)
         with open(file_path,'w',newline='')as file:
 
             writer=csv.writer(file)

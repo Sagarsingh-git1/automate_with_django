@@ -28,11 +28,12 @@ def compress(request):
             
 
             compressed_image.compressed_img.save(
-                f'compressed_img_{original_img}',buffer
+                f'compressed_img_{original_img.name}',buffer
             )
+            compressed_image.save()
             
             response=HttpResponse(buffer.getvalue(),content_type='image/{output_format.lower()}')
-            response['Content-Disposition']=f'attachment;filename=compressed_img_{original_img}'
+            response['Content-Disposition']=f'attachment;filename=compressed_img_{original_img.name}'
             return response
 
     else:
